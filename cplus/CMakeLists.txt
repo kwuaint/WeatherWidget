@@ -32,9 +32,10 @@ target_link_libraries(WeatherWidget
     winmm
     ole32
     oleaut32
-    uuid
-    WebView2LoaderStatic.lib
 )
+
+# The WebView2 loader is loaded at runtime (LoadLibrary), so no import library
+# is needed - this keeps the build free of MSVC-only static libraries.
 
 target_compile_definitions(WeatherWidget PRIVATE
     UNICODE
@@ -47,9 +48,13 @@ if(MSVC)
     target_compile_options(WeatherWidget PRIVATE /utf-8 /W3)
     target_link_options(WeatherWidget PRIVATE /SUBSYSTEM:WINDOWS)
 else()
-    target_compile_options(WeatherWidget PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall)
+    # -fms-extensions lets GCC parse the WebView2 SDK headers (MIDL_INTERFACE / __declspec)
+    target_compile_options(WeatherWidget PRIVATE -fms-extensions -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall)
     target_link_options(WeatherWidget PRIVATE -mwindows)
 endif()
+
+# Shared frontend UI located at the project root (WeatherWidget/weather-widget.html)
+set(SHARED_HTML "${CMAKE_CURRENT_SOURCE_DIR}/../weather-widget.html")
 
 # Copy WebView2Loader.dll and weather-widget.html to output directory
 add_custom_command(TARGET WeatherWidget POST_BUILD
@@ -60,6 +65,6 @@ add_custom_command(TARGET WeatherWidget POST_BUILD
 
 add_custom_command(TARGET WeatherWidget POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_CURRENT_SOURCE_DIR}/weather-widget.html"
+        "${SHARED_HTML}"
         "$<TARGET_FILE_DIR:WeatherWidget>/weather-widget.html"
 )
