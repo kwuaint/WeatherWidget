@@ -1,0 +1,34 @@
+# Build outputs
+bin/
+build/
+out/
+*.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.lib
+*.exp
+
+# Runtime data
+wv2data/
+debug.log
+.server_port
+
+# IDE files
+.vs/
+.vscode/
+*.suo
+*.user
+*.sdf
+*.opensdf
+CMakeSettings.json
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
