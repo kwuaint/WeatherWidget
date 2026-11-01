@@ -78,7 +78,7 @@ echo   Output: build\Release\WeatherWidget.exe
 echo ========================================
 
 :: Copy runtime files
-copy /Y "..\weather-widget.html" "Release\weather-widget.html" >nul
+copy /Y "..\..\weather-widget.html" "Release\weather-widget.html" >nul
 copy /Y "..\sdk\lib\x64\WebView2Loader.dll" "Release\WebView2Loader.dll" >nul
 
 echo.

@@ -20,6 +20,28 @@ namespace WeatherWidget
             try { File.AppendAllText(logFile, DateTime.Now.ToString("HH:mm:ss") + " " + msg + "\r\n"); } catch { }
         }
 
+        // The frontend UI is shared by all implementations and lives at the project root:
+        // WeatherWidget/weather-widget.html (next to this folder). If it is not present
+        // next to the executable, look it up in the parent directory and then in the CWD.
+        internal static string GetHtmlPath()
+        {
+            string fileName = "weather-widget.html";
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
+
+            string[] candidates = new string[]
+            {
+                Path.Combine(baseDir, fileName),
+                Path.Combine(Path.GetDirectoryName(baseDir), fileName),
+                Path.Combine(Directory.GetCurrentDirectory(), fileName)
+            };
+
+            foreach (string candidate in candidates)
+            {
+                if (File.Exists(candidate)) return candidate;
+            }
+            return candidates[0];
+        }
+
         [STAThread]
         static void Main()
         {
@@ -224,14 +246,8 @@ namespace WeatherWidget
             string exeDir = Path.GetDirectoryName(Application.ExecutablePath);
             Log("ExeDir: " + exeDir);
 
-            string htmlPath = Path.Combine(exeDir, "weather-widget.html");
+            string htmlPath = Program.GetHtmlPath();
             Log("HTML path: " + htmlPath + " exists=" + File.Exists(htmlPath));
-
-            if (!File.Exists(htmlPath))
-            {
-                htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "weather-widget.html");
-                Log("Fallback HTML path: " + htmlPath + " exists=" + File.Exists(htmlPath));
-            }
 
             if (!File.Exists(htmlPath))
             {
@@ -346,7 +362,7 @@ namespace WeatherWidget
                     response.StatusCode = 200;
                     response.ContentType = "text/html; charset=utf-8";
 
-                    string htmlPath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "weather-widget.html");
+                    string htmlPath = Program.GetHtmlPath();
                     string htmlContent = File.ReadAllText(htmlPath, Encoding.UTF8);
 
                     byte[] buffer = Encoding.UTF8.GetBytes(htmlContent);

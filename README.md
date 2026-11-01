@@ -39,14 +39,13 @@ This project provides three implementations with identical functionality:
 WeatherWidget/
   README.md              - This file
   LICENSE                - MIT License
+  weather-widget.html    - Frontend UI (single shared copy for all implementations)
   csharp/                - C# implementation (WinForms + WebView2)
     WeatherWidget.cs     - Main application source
-    weather-widget.html  - Frontend UI
     launch.bat           - Launch script
     *.dll                - WebView2 runtime libraries
   cplus/                 - C++ implementation (Win32 + WebView2)
     WeatherWidget.cpp    - Main application source
-    weather-widget.html  - Frontend UI
     CMakeLists.txt       - CMake build configuration
     build.bat            - Build script (MSVC)
     build-mingw.bat      - Build script (MinGW)
@@ -54,10 +53,13 @@ WeatherWidget/
     sdk/                 - WebView2 SDK headers and static libs
   python/                - Python implementation (pywebview + WebView2)
     WeatherWidget.py     - Main application source
-    weather-widget.html  - Frontend UI
     requirements.txt     - Python dependencies
     launch.bat           - Launch script
 ```
+
+> **Shared frontend**: `weather-widget.html` is kept once at the project root and used by all three
+> implementations. Each implementation resolves it from its own directory at startup and falls back
+> to the project root; the C++ build scripts copy it next to the produced binary.
 
 ## Prerequisites
 

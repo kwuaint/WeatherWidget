@@ -24,10 +24,28 @@ HTML_PATH = ""
 EXE_DIR = ""
 
 
+HTML_FILE = "weather-widget.html"
+
+
 def get_exe_dir():
     if getattr(sys, 'frozen', False):
         return os.path.dirname(sys.executable)
     return os.path.dirname(os.path.abspath(__file__))
+
+
+def resolve_html_path(base_dir):
+    """The frontend UI is shared by all implementations and lives at the
+    project root (WeatherWidget/weather-widget.html)."""
+    base_dir = os.path.normpath(base_dir)
+    candidates = [
+        os.path.join(base_dir, HTML_FILE),
+        os.path.join(os.path.dirname(base_dir), HTML_FILE),
+        os.path.join(os.getcwd(), HTML_FILE),
+    ]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+    return candidates[0]
 
 
 def log(msg):
@@ -165,7 +183,7 @@ def main():
     global window, HTML_PATH, EXE_DIR, SERVER_PORT
 
     EXE_DIR = get_exe_dir()
-    HTML_PATH = os.path.join(EXE_DIR, "weather-widget.html")
+    HTML_PATH = resolve_html_path(EXE_DIR)
     log("=== WeatherWidget Python Start ===")
     log(f"ExeDir: {EXE_DIR}")
     log(f"HTML: {HTML_PATH} exists={os.path.exists(HTML_PATH)}")
