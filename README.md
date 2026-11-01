@@ -1,124 +1,93 @@
 # WeatherWidget
 
-A lightweight desktop weather widget for Windows, with a hand-drawn pencil-sketch UI.
+A lightweight weather widget desktop application for Windows, built with **C# WinForms + WebView2**. Features a charming **pencil-sketch UI style** with childlike aesthetics.
 
-![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
-![License](https://img.shields.io/badge/license-MIT-yellow)
+![Platform](https://img.shields.io/badge/platform-Windows%2010/11-blue)
+![.NET](https://img.shields.io/badge/.NET%20Framework-4.6.2+-purple)
+![WebView2](https://img.shields.io/badge/WebView2-Chromium-green)
+![License](https://img.shields.io/badge/license-MIT-orange)
 
 ## Features
 
-- **Pencil-sketch UI** with paper texture, hand-drawn style SVG icons
-- **Real-time weather** data from [Open-Meteo](https://open-meteo.com/) (no API key required)
-- **Auto geolocation**: Browser GPS -> ipinfo.io -> ip-api.com -> Beijing fallback
-- **City search**: Chinese name + pinyin initial support for 55+ Chinese cities
-- **City flowers**: Displays local city flower badges inline with city name
-- **24-hour & 7-day forecast** with temperature bar visualization
-- **Detail panels**: Feels-like temp, humidity, UV index, wind compass, pressure, visibility
-- **Sunrise/sunset arc** with real-time progress indicator
-- **Custom title bar**: Drag to move, minimize, close, always-on-top toggle
-- **Rounded corners** with paper-colored background
-- **Local HTTP proxy**: Bypasses CORS restrictions for weather API calls
-- **Auto-refresh** every 10 minutes
+- **Current weather** — temperature, feels-like, humidity, UV index, wind speed/direction, pressure, visibility
+- **24-hour forecast** — hourly temperature and weather icons
+- **7-day forecast** — daily high/low with temperature range bars
+- **Sunrise & sunset** — animated sun arc showing day progress
+- **City search** — search by Chinese name or pinyin initials (e.g. type "bj" for Beijing)
+- **Auto geolocation** — browser GPS → ipinfo.io → ip-api.com → default city fallback chain
+- **City flowers** — displays the official city flower badge when switching cities (55+ Chinese cities)
+- **Pencil-sketch UI** — hand-drawn style with paper texture, doodle icons, and playful typography
+- **Auto-refresh** — weather data refreshes every 10 minutes
+- **Always on top** — toggle to keep the widget above other windows
 
-## Implementations
+## Prerequisites
 
-This project provides two native implementations with identical functionality:
+- **Windows 10/11**
+- **.NET Framework 4.6.2** or later (pre-installed on Windows 10+)
+- **Microsoft Edge WebView2 Runtime** (pre-installed on most Windows 10/11 systems)
+  - If not installed, download from: https://developer.microsoft.com/en-us/microsoft-edge/webview2/
 
-| | C# (`csharp/`) | C++ (`cplus/`) |
-|---|---|---|
-| **Window framework** | WinForms | Win32 API |
-| **Web engine** | WebView2 (.NET wrapper) | WebView2 (COM/C++) |
-| **HTTP proxy** | HttpListener (.NET) | WinSock2 + WinHTTP |
-| **Compiler** | csc.exe (.NET Framework 4.6.2) | cl.exe (MSVC) or g++ (MinGW) |
-| **Binary size** | ~800 KB | ~500 KB (static linked) |
-| **Dependencies** | .NET Framework 4.6.2 | None (static linked) |
+## Build from Source
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/kwuaint/WeatherWidget.git
+cd WeatherWidget
+```
+
+### 2. Compile
+
+Use the .NET Framework C# compiler:
+
+```bash
+"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" ^
+  /target:winexe ^
+  /langversion:5 ^
+  /reference:Microsoft.Web.WebView2.Core.dll ^
+  /reference:Microsoft.Web.WebView2.WinForms.dll ^
+  /reference:System.Drawing.dll ^
+  /reference:System.Windows.Forms.dll ^
+  /out:WeatherWidget.exe ^
+  WeatherWidget.cs
+```
+
+### 3. Run
+
+```bash
+WeatherWidget.exe
+```
+
+Or double-click the included `launch.bat` launcher script.
 
 ## Project Structure
 
 ```
 WeatherWidget/
-  README.md              - This file
-  LICENSE                - MIT License
-  csharp/                - C# implementation (WinForms + WebView2)
-    WeatherWidget.cs     - Main application source
-    weather-widget.html  - Frontend UI
-    launch.bat           - Launch script
-    *.dll                - WebView2 runtime libraries
-  cplus/                 - C++ implementation (Win32 + WebView2)
-    WeatherWidget.cpp    - Main application source
-    weather-widget.html  - Frontend UI (shared)
-    CMakeLists.txt       - CMake build configuration
-    build.bat            - Build script (MSVC)
-    build-mingw.bat      - Build script (MinGW)
-    launch.bat           - Launch script
-    sdk/                 - WebView2 SDK headers and static libs
+├── WeatherWidget.cs              # Main C# WinForms app (WebView2 host + HTTP proxy)
+├── weather-widget.html           # Frontend UI (HTML/CSS/JS, sketch-style)
+├── Microsoft.Web.WebView2.Core.dll
+├── Microsoft.Web.WebView2.WinForms.dll
+├── WebView2Loader.dll
+├── launch.bat                    # Windows launcher script
+├── README.md
+├── LICENSE
+└── .gitignore
 ```
 
-## Prerequisites
+## Architecture
 
-- **Windows 10/11** (64-bit)
-- **Microsoft Edge WebView2 Runtime** (pre-installed on most systems)
-  - Download: https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+- **C# WinForms** hosts a **WebView2** (Chromium) control to render the UI
+- A local **HttpListener** server serves the HTML file and proxies API requests to:
+  - `api.open-meteo.com` — weather data
+  - `geocoding-api.open-meteo.com` — city search
+  - `ipinfo.io` / `ip-api.com` — IP-based geolocation (with fallback)
+- All API calls go through the local proxy to avoid CORS issues
 
-### Build Tools
+## Data Source
 
-**C# version:**
-- .NET Framework 4.6.2+ (included with Windows)
-- csc.exe compiler (included with .NET Framework)
-
-**C++ version (choose one):**
-- Visual Studio 2019/2022 with "Desktop development with C++" workload + CMake
-- MinGW-w64 (GCC 10+)
-
-## Building
-
-### C# Version
-
-```bat
-cd csharp
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe ^
-  /target:winexe /langversion:5 ^
-  /reference:Microsoft.Web.WebView2.Core.dll ^
-  /reference:Microsoft.Web.WebView2.WinForms.dll ^
-  /reference:System.Drawing.dll ^
-  /reference:System.Windows.Forms.dll ^
-  /out:WeatherWidget.exe WeatherWidget.cs
-launch.bat
-```
-
-### C++ Version (MSVC)
-
-```bat
-cd cplus
-build.bat
-launch.bat
-```
-
-### C++ Version (MinGW)
-
-```bat
-cd cplus
-build-mingw.bat
-launch.bat
-```
-
-## How It Works
-
-1. **Native Window**: Creates a borderless, rounded-corner window with a custom title bar
-2. **WebView2 Host**: Embeds a Chromium-based web view to render the HTML/CSS/JS frontend
-3. **HTTP Proxy**: A local server on a random port handles API requests:
-   - `/api/forecast` -> Open-Meteo weather API
-   - `/api/search` -> Open-Meteo geocoding API
-   - `/api/ipgeo` -> ipinfo.io (primary IP geolocation)
-   - `/api/ipgeo2` -> ip-api.com (fallback IP geolocation)
-   - All other paths -> serves `weather-widget.html`
-4. **Geolocation Chain**: Browser GPS (3s) -> ipinfo.io (5s) -> ip-api.com (5s) -> Beijing fallback
-
-## API Credits
-
-- Weather data: [Open-Meteo](https://open-meteo.com/) (free, no API key)
-- IP geolocation: [ipinfo.io](https://ipinfo.io/) + [ip-api.com](http://ip-api.com/)
+Weather data is provided by [Open-Meteo](https://open-meteo.com/) (free, no API key required).
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+MIT License. See [LICENSE](LICENSE) for details.
