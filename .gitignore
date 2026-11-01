@@ -1,0 +1,21 @@
+# Compiled binaries
+*.exe
+
+# Runtime files
+debug.log
+.server_port
+
+# WebView2 cache
+wv2data/
+
+# NuGet extracted
+webview2_sdk/
+.npm-bootstrap/
+
+# Private config (contains credentials)
+skills/
+
+# IDE
+.vs/
+*.suo
+*.user
