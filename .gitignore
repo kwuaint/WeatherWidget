@@ -1,21 +1,44 @@
-# Compiled binaries
+# Build outputs
 *.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.lib
+*.exp
 
-# Runtime files
-debug.log
-.server_port
+# Runtime data
+**/wv2data/
+**/debug.log
+**/.server_port
+**/.npm-bootstrap/
 
-# WebView2 cache
-wv2data/
-
-# NuGet extracted
-webview2_sdk/
-.npm-bootstrap/
-
-# Private config (contains credentials)
-skills/
-
-# IDE
+# IDE files
 .vs/
+.vscode/
 *.suo
 *.user
+*.sdf
+*.opensdf
+CMakeSettings.json
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Build directories
+**/bin/
+**/build/
+**/out/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary files
+**/temp/
+*.tmp
+*.bak
+*.swp
+*~

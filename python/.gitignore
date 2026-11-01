@@ -1,0 +1,25 @@
+# Runtime
+__pycache__/
+*.pyc
+*.pyo
+debug.log
+
+# Virtual env
+venv/
+.venv/
+env/
+
+# PyInstaller / cx_Freeze outputs
+dist/
+build/
+*.spec
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

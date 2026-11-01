@@ -1,0 +1,9 @@
+# WebView2 SDK and runtime files
+webview2_sdk/
+*.dll
+*.exe
+
+# Runtime data
+wv2data/
+debug.log
+.server_port
